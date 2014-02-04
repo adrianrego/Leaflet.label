@@ -139,9 +139,9 @@ L.Label = L.Class.extend({
 
 		if (typeof this._content === 'string') {
 			this._container.innerHTML = this._content;
-
 			this._prevContent = this._content;
 
+			this._labelHeight = this._container.offsetHeight;
 			this._labelWidth = this._container.offsetWidth;
 		}
 	},
@@ -162,19 +162,16 @@ L.Label = L.Class.extend({
 			centerPoint = map.latLngToContainerPoint(map.getCenter()),
 			labelPoint = map.layerPointToContainerPoint(pos),
 			direction = this._getDirection(),
+			labelHeight = this._labelHeight,
 			labelWidth = this._labelWidth,
 			offset = L.point(this.options.offset),
-			varticalOffset;
+			verticalOffset = offset.y;
 
 		if (direction === 'top') {
-			verticalOffset = offset.y;
-			verticalOffset -= this._isOnMarker() ? this._getIconHeight() : 0;
-
+			verticalOffset -= this._isOnMarker() ? this._getIconHeight() : labelHeight - 4;
 			pos = pos.add(L.point(-labelWidth / 2, verticalOffset));
 		} else if (direction === 'bottom') {
-			verticalOffset = offset.y;
-			verticalOffset += this._isOnMarker ? this._getIconHeight() : 0;
-
+			verticalOffset += this._isOnMarker() ? this._getIconHeight() : labelHeight + 4;
 			pos = pos.add(L.point(-labelWidth / 2, verticalOffset));
 		} else if (direction === 'right' || direction === 'auto' && labelPoint.x < centerPoint.x) {
 			direction = 'right';
@@ -192,10 +189,10 @@ L.Label = L.Class.extend({
 		return 'leaflet-label-' + direction;
 	},
 
-	_setProperClass: function (pos, direction) {
+	_setProperClass: function (pos, dir) {
 		var map = this._map,
 			container = this._container,
-			direction = direction || this._getDirection(),
+			direction = dir || this._getDirection(),
 			labelPoint = map.layerPointToContainerPoint(pos),
 			centerPoint = map.latLngToContainerPoint(map.getCenter()),
 			classToAdd = this._generateLabelClass(direction);

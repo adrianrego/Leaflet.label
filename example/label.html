@@ -28,6 +28,8 @@
 		var circle = L.circleMarker([-37.7612, 175.2856], { fillColor: "#f00", radius: 8 } ).bindLabel("Hello World", { direction: 'left' }).addTo(map);
 
 		L.marker([-37.7772, 175.2606]).bindLabel('Look revealing label!').addTo(map);
+		L.marker([-37.7752, 175.2806]).bindLabel('On top!', {direction: 'top', noHide: true}).addTo(map);
+		L.marker([-37.7692, 175.2706]).bindLabel('On bottom!', {direction: 'bottom'}).addTo(map);
 
 		var m = L.marker([-37.785, 175.263], {draggable:true}).bindLabel('A sweet static label!', { noHide: true })
 			.addTo(map);
@@ -50,7 +52,7 @@
 			[-37.7612, 175.2756],
 			[-37.7702, 175.2796],
 			[-37.7802, 175.2750]
-		],{ weight: 12, color: '#fe57a1' }).bindLabel('Even polylines can have labels.', { direction: 'auto' }).addTo(map);
+		],{ weight: 12, color: '#fe57a1' }).bindLabel('Even polylines can have labels.').addTo(map);
 
 		// Remove polyline on click so we can check that the label is also removed
 		p.on('click', function () { map.removeLayer(p); });
