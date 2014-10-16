@@ -44,8 +44,8 @@ L.Label = L.Class.extend({
 		this.setOpacity(this.options.opacity);
 
 		map
-			.on('moveend', this._onMoveEnd, this)
-			.on('viewreset', this._onViewReset, this);
+		.on('moveend', this._onMoveEnd, this)
+		.on('viewreset', this._onViewReset, this);
 
 		if (this._animated) {
 			map.on('zoomanim', this._zoomAnimation, this);
@@ -139,11 +139,19 @@ L.Label = L.Class.extend({
 
 		if (typeof this._content === 'string') {
 			this._container.innerHTML = this._content;
-			this._prevContent = this._content;
-
-			this._labelHeight = this._container.offsetHeight;
-			this._labelWidth = this._container.offsetWidth;
 		}
+		else {
+			while (this._container.hasChildNodes()) {
+				this._container.removeChild(this._container.firstChild);
+			}
+
+			this._container.appendChild(this._content);
+		}
+
+		this._prevContent = this._content;
+
+		this._labelHeight = this._container.offsetHeight;
+		this._labelWidth = this._container.offsetWidth;
 	},
 
 	_updatePosition: function () {
@@ -158,14 +166,14 @@ L.Label = L.Class.extend({
 
 	_setPosition: function (pos) {
 		var map = this._map,
-			container = this._container,
-			centerPoint = map.latLngToContainerPoint(map.getCenter()),
-			labelPoint = map.layerPointToContainerPoint(pos),
-			direction = this._getDirection(),
-			labelHeight = this._labelHeight,
-			labelWidth = this._labelWidth,
-			offset = L.point(this.options.offset),
-			verticalOffset = offset.y;
+		container = this._container,
+		centerPoint = map.latLngToContainerPoint(map.getCenter()),
+		labelPoint = map.layerPointToContainerPoint(pos),
+		direction = this._getDirection(),
+		labelHeight = this._labelHeight,
+		labelWidth = this._labelWidth,
+		offset = L.point(this.options.offset),
+		verticalOffset = offset.y;
 
 		if (direction === 'top') {
 			verticalOffset -= this._isOnMarker() ? this._getIconHeight() : labelHeight - 4;
@@ -181,6 +189,9 @@ L.Label = L.Class.extend({
 			pos = pos.add(L.point(-offset.x - labelWidth, offset.y));
 		}
 
+		pos.x = Math.round(pos.x);
+		pos.y = Math.round(pos.y);
+
 		this._setProperClass(pos, direction);
 		L.DomUtil.setPosition(container, pos);
 	},
@@ -191,11 +202,11 @@ L.Label = L.Class.extend({
 
 	_setProperClass: function (pos, dir) {
 		var map = this._map,
-			container = this._container,
-			direction = dir || this._getDirection(),
-			labelPoint = map.layerPointToContainerPoint(pos),
-			centerPoint = map.latLngToContainerPoint(map.getCenter()),
-			classToAdd = this._generateLabelClass(direction);
+		container = this._container,
+		direction = dir || this._getDirection(),
+		labelPoint = map.layerPointToContainerPoint(pos),
+		centerPoint = map.latLngToContainerPoint(map.getCenter()),
+		classToAdd = this._generateLabelClass(direction);
 
 		for (var i = 0; i < this._directions.length; i++) {
 			var d = this._directions[i];
@@ -235,7 +246,7 @@ L.Label = L.Class.extend({
 		if (!this.options.clickable) { return; }
 
 		var container = this._container,
-			events = ['dblclick', 'mousedown', 'mouseover', 'mouseout', 'contextmenu'];
+		events = ['dblclick', 'mousedown', 'mouseover', 'mouseout', 'contextmenu'];
 
 		L.DomUtil.addClass(container, 'leaflet-clickable');
 		L.DomEvent.on(container, 'click', this._onMouseClick, this);
@@ -249,7 +260,7 @@ L.Label = L.Class.extend({
 		if (!this.options.clickable) { return; }
 
 		var container = this._container,
-			events = ['dblclick', 'mousedown', 'mouseover', 'mouseout', 'contextmenu'];
+		events = ['dblclick', 'mousedown', 'mouseover', 'mouseout', 'contextmenu'];
 
 		L.DomUtil.removeClass(container, 'leaflet-clickable');
 		L.DomEvent.off(container, 'click', this._onMouseClick, this);
